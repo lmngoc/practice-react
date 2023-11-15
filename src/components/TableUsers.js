@@ -4,17 +4,21 @@ import Table from 'react-bootstrap/Table';
 import { fetchAllUser } from '../services/UserService';
 import ReactPaginate from 'react-paginate';
 import ModalAddNew from './ModalAddNew.js';
+import ModalEditUser from './ModalEditUser.js';
 const TableUsers = (props) => {
     const [listUsers, setListUser] = useState([]);
-    const [totalPages, setTotalPages] = useState([]);
+    const [totalPages, setTotalPages] = useState(0);
 
     const [isShowModalAddNew, setIsShowModalAddNew] = useState(false);
+    const [isShowModalEdit, setIsShowModalEdit] = useState(false);
+    const [dataUserEdit, setDataUserEdit] = useState({});
     const handleClose = () => {
         setIsShowModalAddNew(false);
+        setIsShowModalEdit(false);
     }
     useEffect(() => {
         //call api
-        getUser(2);
+        getUser(1);
     }, []);
     const getUser = async (page) => {
         let res = await fetchAllUser(page);
@@ -32,6 +36,11 @@ const TableUsers = (props) => {
         setListUser([user, ...listUsers]);
     }
 
+    const handleEditUser = (user) => {
+        setDataUserEdit(user);
+        setIsShowModalEdit(true);
+    }
+
     return (
         <>
             <div className='my-3 add-new'>
@@ -46,6 +55,7 @@ const TableUsers = (props) => {
                         <th>Email</th>
                         <th>First Name</th>
                         <th>Last Name</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -56,6 +66,10 @@ const TableUsers = (props) => {
                                 <td>{item.email}</td>
                                 <td>{item.first_name}</td>
                                 <td>{item.last_name}</td>
+                                <td>
+                                    <button className='btn btn-warning mx-3' onClick={() => handleEditUser(item)}>Edit</button>
+                                    <button className='btn btn-danger'>Delete</button>
+                                </td>
                             </tr>
                         )
                     })}
@@ -82,6 +96,7 @@ const TableUsers = (props) => {
                 activeClassName="active"
             />
             <ModalAddNew show={isShowModalAddNew} handleClose={handleClose} handleUpdateTable={handleUpdateTable} />
+            <ModalEditUser show={isShowModalEdit} handleClose={handleClose} dataUserEdit={dataUserEdit} />
         </>
     )
 }
