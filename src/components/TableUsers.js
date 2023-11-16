@@ -6,6 +6,7 @@ import ReactPaginate from 'react-paginate';
 import ModalAddNew from './ModalAddNew.js';
 import ModalEditUser from './ModalEditUser.js';
 import _ from 'lodash';
+import { debounce } from 'lodash';
 import ModalConfirm from './ModalConfirm.js';
 import './TableUser.scss';
 const TableUsers = (props) => {
@@ -21,6 +22,7 @@ const TableUsers = (props) => {
 
     const [sortBy, setSortBy] = useState("asc");
     const [sortField, setSortField] = useState("id");
+
     const handleClose = () => {
         setIsShowModalAddNew(false);
         setIsShowModalEdit(false);
@@ -79,14 +81,26 @@ const TableUsers = (props) => {
         cloneListUser = _.orderBy(cloneListUser, [sortField], [sortBy]);
         setListUser(cloneListUser);
     }
+    const handleSearch = debounce((event) => {
+        let term = event.target.value;
+        console.log("run search term", term);
+        if (term) {
 
-    console.log(sortBy, sortField);
+            let cloneListUser = _.cloneDeep(listUsers);
+            cloneListUser = cloneListUser.filter(item => item.email.includes(term));
+            setListUser(cloneListUser);
+        } else {
+            getUser();
+        }
+
+    }, 300)
     return (
         <>
             <div className='my-3 add-new'>
                 <span>List users</span>
                 <button className='btn btn-success' onClick={() => setIsShowModalAddNew(true)}>Add new user</button>
             </div>
+            <div className='col-4 my-3'> <input className='form-control' placeholder='Search user by email' onChange={(event) => handleSearch(event)} /></div>
             <Table striped bordered hover>
 
                 <thead>
@@ -95,8 +109,8 @@ const TableUsers = (props) => {
                             <div className='sort-header'>
                                 <span>ID</span>
                                 <span>
-                                    <i class="fa-solid fa-arrow-down-long" onClick={() => handleSort("desc", "id")}></i>
-                                    <i class="fa-solid fa-arrow-up-long" onClick={() => handleSort("asc", "id")}></i>
+                                    <i className="fa-solid fa-arrow-down-long" onClick={() => handleSort("desc", "id")}></i>
+                                    <i className="fa-solid fa-arrow-up-long" onClick={() => handleSort("asc", "id")}></i>
                                 </span>
                             </div>
                         </th>
@@ -105,8 +119,8 @@ const TableUsers = (props) => {
                             <div className='sort-header'>
                                 <span>First Name</span>
                                 <span>
-                                    <i class="fa-solid fa-arrow-down-long" onClick={() => handleSort("desc", "first_name")}></i>
-                                    <i class="fa-solid fa-arrow-up-long" onClick={() => handleSort("asc", "first_name")}></i>
+                                    <i className="fa-solid fa-arrow-down-long" onClick={() => handleSort("desc", "first_name")}></i>
+                                    <i className="fa-solid fa-arrow-up-long" onClick={() => handleSort("asc", "first_name")}></i>
                                 </span>
                             </div>
                         </th>
