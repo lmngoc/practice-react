@@ -29,6 +29,14 @@ const TableUsers = (props) => {
         cloneListUser[index].first_name = user.first_name;
         setListUser(cloneListUser);
     }
+
+    const handleDeleteUserFromModal = (user) => {
+        //console.log("check user:", user);
+        let cloneListUser = _.cloneDeep(listUsers);
+        cloneListUser = cloneListUser.filter(item => item.id !== user.id);
+        setListUser(cloneListUser);
+    }
+
     useEffect(() => {
         //call api
         getUser(1);
@@ -115,7 +123,7 @@ const TableUsers = (props) => {
             />
             <ModalAddNew show={isShowModalAddNew} handleClose={handleClose} handleUpdateTable={handleUpdateTable} />
             <ModalEditUser show={isShowModalEdit} handleClose={handleClose} dataUserEdit={dataUserEdit} handleEditUserFromModal={handleEditUserFromModal} />
-            <ModalConfirm show={isShowModalDelete} handleClose={handleClose} dataUserDelete={dataUserDelete} />
+            <ModalConfirm show={isShowModalDelete} handleClose={handleClose} dataUserDelete={dataUserDelete} handleDeleteUserFromModal={handleDeleteUserFromModal} />
         </>
     )
 }
