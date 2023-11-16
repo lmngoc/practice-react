@@ -6,20 +6,24 @@ import ReactPaginate from 'react-paginate';
 import ModalAddNew from './ModalAddNew.js';
 import ModalEditUser from './ModalEditUser.js';
 import _ from 'lodash';
+import ModalConfirm from './ModalConfirm.js';
 const TableUsers = (props) => {
     const [listUsers, setListUser] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
 
     const [isShowModalAddNew, setIsShowModalAddNew] = useState(false);
     const [isShowModalEdit, setIsShowModalEdit] = useState(false);
+    const [isShowModalDelete, setIsShowModalDelete] = useState(false);
     const [dataUserEdit, setDataUserEdit] = useState({});
+    const [dataUserDelete, setDataUserDelete] = useState({});
     const handleClose = () => {
         setIsShowModalAddNew(false);
         setIsShowModalEdit(false);
+        setIsShowModalDelete(false);
     }
 
     const handleEditUserFromModal = (user) => {
-        console.log("check user:", user);
+        //console.log("check user:", user);
         let cloneListUser = _.cloneDeep(listUsers);
         let index = listUsers.findIndex(item => item.id === user.id);
         cloneListUser[index].first_name = user.first_name;
@@ -50,7 +54,10 @@ const TableUsers = (props) => {
         setIsShowModalEdit(true);
     }
 
-
+    const handleDeleteUser = (user) => {
+        setIsShowModalDelete(true);
+        setDataUserDelete(user);
+    }
 
     return (
         <>
@@ -79,7 +86,7 @@ const TableUsers = (props) => {
                                 <td>{item.last_name}</td>
                                 <td>
                                     <button className='btn btn-warning mx-3' onClick={() => handleEditUser(item)}>Edit</button>
-                                    <button className='btn btn-danger'>Delete</button>
+                                    <button className='btn btn-danger' onClick={() => handleDeleteUser(item)}>Delete</button>
                                 </td>
                             </tr>
                         )
@@ -108,6 +115,7 @@ const TableUsers = (props) => {
             />
             <ModalAddNew show={isShowModalAddNew} handleClose={handleClose} handleUpdateTable={handleUpdateTable} />
             <ModalEditUser show={isShowModalEdit} handleClose={handleClose} dataUserEdit={dataUserEdit} handleEditUserFromModal={handleEditUserFromModal} />
+            <ModalConfirm show={isShowModalDelete} handleClose={handleClose} dataUserDelete={dataUserDelete} />
         </>
     )
 }
