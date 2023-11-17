@@ -24,6 +24,8 @@ const TableUsers = (props) => {
     const [sortBy, setSortBy] = useState("asc");
     const [sortField, setSortField] = useState("id");
 
+    const [dataExport, setDataExport] = useState([]);
+
     const handleClose = () => {
         setIsShowModalAddNew(false);
         setIsShowModalEdit(false);
@@ -96,20 +98,33 @@ const TableUsers = (props) => {
 
     }, 300)
 
-    const csvData = [
-        ["firstname", "lastname", "email"],
-        ["Ahmed", "Tomi", "ah@smthing.co.com"],
-        ["Raed", "Labes", "rl@smthing.co.com"],
-        ["Yezzi", "Min l3b", "ymin@cocococo.com"]
-    ];
+
+    const getUsersExport = (event, done) => {
+        let result = []
+
+        if (listUsers && listUsers.length > 0) {
+            result.push(["Id", "Email", "First name", "Last name"]);
+            listUsers.map((item, index) => {
+                let arr = [];
+                arr[0] = item.id;
+                arr[1] = item.email;
+                arr[2] = item.first_name
+                arr[3] = item.last_name
+                result.push(arr);
+            })
+            setDataExport(result);
+            done();
+
+        }
+    }
     return (
         <>
             <div className='my-3 add-new'>
                 <span>List users</span>
                 <div className='group-btns'>
-                    <label htmlFor='test' className="btn btn-warning"><i class="fa-solid fa-file-import"></i> Import</label>
+                    <label htmlFor='test' className="btn btn-warning"><i className="fa-solid fa-file-import"></i> Import</label>
                     <input type='file' id='test' hidden />
-                    <CSVLink data={csvData} filename={"users.csv"} className="btn btn-primary" ><i className="fa-solid fa-file-arrow-down"></i> Export me</CSVLink>
+                    <CSVLink data={dataExport} asyncOnClick={true} onClick={getUsersExport} filename={"users.csv"} className="btn btn-primary" ><i className="fa-solid fa-file-arrow-down"></i> Export me</CSVLink>
                     <button className='btn btn-success' onClick={() => setIsShowModalAddNew(true)}><i className="fa-solid fa-circle-plus"></i> Add new</button>
                 </div>
 
