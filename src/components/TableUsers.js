@@ -9,6 +9,7 @@ import _ from 'lodash';
 import { debounce } from 'lodash';
 import ModalConfirm from './ModalConfirm.js';
 import './TableUser.scss';
+import { CSVLink } from "react-csv";
 const TableUsers = (props) => {
     const [listUsers, setListUser] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
@@ -94,12 +95,25 @@ const TableUsers = (props) => {
         }
 
     }, 300)
+
+    const csvData = [
+        ["firstname", "lastname", "email"],
+        ["Ahmed", "Tomi", "ah@smthing.co.com"],
+        ["Raed", "Labes", "rl@smthing.co.com"],
+        ["Yezzi", "Min l3b", "ymin@cocococo.com"]
+    ];
     return (
         <>
             <div className='my-3 add-new'>
                 <span>List users</span>
-                <button className='btn btn-success' onClick={() => setIsShowModalAddNew(true)}>Add new user</button>
-            </div>
+                <div className='group-btns'>
+                    <label htmlFor='test' className="btn btn-warning"><i class="fa-solid fa-file-import"></i> Import</label>
+                    <input type='file' id='test' hidden />
+                    <CSVLink data={csvData} filename={"users.csv"} className="btn btn-primary" ><i className="fa-solid fa-file-arrow-down"></i> Export me</CSVLink>
+                    <button className='btn btn-success' onClick={() => setIsShowModalAddNew(true)}><i className="fa-solid fa-circle-plus"></i> Add new</button>
+                </div>
+
+            </div >
             <div className='col-4 my-3'> <input className='form-control' placeholder='Search user by email' onChange={(event) => handleSearch(event)} /></div>
             <Table striped bordered hover>
 
