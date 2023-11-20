@@ -10,6 +10,9 @@ import { debounce } from 'lodash';
 import ModalConfirm from './ModalConfirm.js';
 import './TableUser.scss';
 import { CSVLink } from "react-csv";
+import Papa from 'papaparse';
+import { toast } from 'react-toastify';
+
 const TableUsers = (props) => {
     const [listUsers, setListUser] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
@@ -117,13 +120,57 @@ const TableUsers = (props) => {
 
         }
     }
+
+    const handleImportCSV = (event) => {
+        if (event.target && event.target.files && event.target.files[0]) {
+            let file = event.target.files[0];
+            if (file.type !== "text/csv") {
+                toast.error("Only accept CSV file");
+                return;
+            }
+            Papa.parse(file, {
+                complete: function (results) {
+                    let rawCSV = results.data;
+                    if (rawCSV.length > 0) {
+                        if (rawCSV[0] && rawCSV[0].length === 3) {
+                            if (rawCSV[0][0] !== "email" || rawCSV[0][1] !== "first_name" || rawCSV[0][2] !== "last_name") {
+                                toast.error("Wrong format header CSV file");
+                            } else {
+                                let result = [];
+
+                                rawCSV.map((item, index) => {
+                                    if (index > 0 && item.length === 3) {
+                                        let obj = {};
+                                        obj.email = item[0];
+                                        obj.first_name = item[1];
+                                        obj.last_name = item[2];
+                                        result.push(obj);
+                                    }
+                                })
+                                setListUser(result);
+                            }
+                        } else {
+                            toast.error("Wrong format CSV file");
+
+                        }
+                    } else {
+                        toast.error("Not found data CSV file");
+
+                    }
+                }
+            });
+        }
+
+
+
+    }
     return (
         <>
             <div className='my-3 add-new'>
                 <span>List users</span>
                 <div className='group-btns'>
                     <label htmlFor='test' className="btn btn-warning"><i className="fa-solid fa-file-import"></i> Import</label>
-                    <input type='file' id='test' hidden />
+                    <input type='file' id='test' hidden onChange={(event) => handleImportCSV(event)} />
                     <CSVLink data={dataExport} asyncOnClick={true} onClick={getUsersExport} filename={"users.csv"} className="btn btn-primary" ><i className="fa-solid fa-file-arrow-down"></i> Export me</CSVLink>
                     <button className='btn btn-success' onClick={() => setIsShowModalAddNew(true)}><i className="fa-solid fa-circle-plus"></i> Add new</button>
                 </div>
