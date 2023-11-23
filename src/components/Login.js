@@ -1,20 +1,24 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { loginApi } from "../services/UserService";
 import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
+import { UserContext } from '../context/UserContext.js';
 
 const Login = () => {
     const navigate = useNavigate();
+    const { loginContext } = useContext(UserContext);
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isShowPassword, setIsShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    useEffect(() => {
-        let token = localStorage.getItem("token");
-        if (token) {
-            navigate("/");
-        }
-    }, []);
+
+    // useEffect(() => {
+    //     let token = localStorage.getItem("token");
+    //     if (token) {
+    //         navigate("/");
+    //     }
+    // }, []);
 
     const handleLogin = async () => {
         if (!email || !password) {
@@ -25,7 +29,7 @@ const Login = () => {
         let res = await loginApi(email, password);
         //console.log("check res:", res);
         if (res && res.token) {
-            localStorage.setItem("token", res.token);
+            loginContext(email, res.token);
             navigate("/");
         } else {
             if (res && res.status === 400) {
@@ -33,6 +37,9 @@ const Login = () => {
             }
         }
         setIsLoading(false);
+    }
+    const handleBack = () => {
+        navigate("/");
     }
     return (
         <div className="col-12 col-sm-4 login-container">
@@ -47,7 +54,7 @@ const Login = () => {
             </div>
 
             <button className={email && password ? "active" : ""} disabled={email && password && !isLoading ? false : true} onClick={() => handleLogin()}>{isLoading && <i class="fa-solid fa-sync fa-spin"></i>} Login</button>
-            <div className="back"><i className="fa-solid fa-angles-left "></i> Go back</div>
+            <div className="back"><i className="fa-solid fa-angles-left "></i> <span onClick={() => handleBack()}>Go back</span> </div>
         </div >
     )
 }
