@@ -53,7 +53,9 @@ const Login = () => {
                 <i className={isShowPassword === true ? "fa-solid fa-eye" : "fa-solid fa-eye-slash"} onClick={() => setIsShowPassword(!isShowPassword)}></i>
             </div>
 
-            <button className={email && password ? "active" : ""} disabled={email && password && !isLoading ? false : true} onClick={() => handleLogin()}>{isLoading && <i class="fa-solid fa-sync fa-spin"></i>} Login</button>
+            <button className={email && password ? "active" : ""} disabled={email && password && !isLoading ? false : true} onClick={() => handleLogin()}>
+                {isLoading && <i className="fa-solid fa-sync fa-spin"></i>} Login
+            </button>
             <div className="back"><i className="fa-solid fa-angles-left "></i> <span onClick={() => handleBack()}>Go back</span> </div>
         </div >
     )
