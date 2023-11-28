@@ -6,8 +6,11 @@ import { ToastContainer } from 'react-toastify';
 import { useContext, useEffect } from 'react';
 import { UserContext } from './context/UserContext.js';
 import AppRoutes from './routes/AppRoutes.js';
+import { useSelector } from 'react-redux';
 
 function App() {
+  const dataUserRedux = useSelector(state => state.user.user);
+  console.log("check data redux", dataUserRedux);
   const { user, loginContext } = useContext(UserContext);
   console.log("user", user);
   useEffect(() => {
